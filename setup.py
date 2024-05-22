@@ -28,9 +28,14 @@
 #
 #####################################################################################
 
-from __future__ import absolute_import
 import os
+import setuptools
 from setuptools import setup, find_packages
+from distutils.version import LooseVersion
+
+if LooseVersion(setuptools.__version__) < LooseVersion("20.5"):
+    import sys
+    sys.exit("Installation failed: Upgrade setuptools to version 20.5 or later")
 
 base_dir = os.path.dirname(__file__)
 about = {}
@@ -56,8 +61,12 @@ setup(
     version=about["__version__"],
     description=about["__summary__"],
     long_description=long_description,
+    long_description_content_type="text/markdown",
     license=about["__license__"],
     url=about["__uri__"],
+    project_urls={
+        "Bug Tracker": "https://github.com/mcode-cc/python-yandex-cloud-sdk-wrapper/issues",
+    },
     author=about["__author__"],
     author_email=about["__email__"],
     platforms=("Any"),
@@ -67,7 +76,7 @@ setup(
     data_files=[(".", ["LICENSE", "COPYRIGHT"])],
     zip_safe=False,
     classifiers=[
-        "License :: OSI Approved :: GNU Affero General Public License v3",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Development Status :: 1 - Planning",
         "Environment :: No Input/Output (Daemon)",
         "Environment :: Console",
