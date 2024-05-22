@@ -36,7 +36,7 @@ base_dir = os.path.dirname(__file__)
 about = {}
 if base_dir:
     os.chdir(base_dir)
-with open(os.path.join(base_dir, "__about__.py")) as f:
+with open(os.path.join(base_dir, "yc_aws_wrapper", "__about__.py")) as f:
     exec(f.read(), about)
 
 with open(os.path.join(base_dir, "README.md")) as f:
@@ -83,5 +83,5 @@ setup(
         "Topic :: Software Development :: Libraries :: Application Frameworks",
         "Topic :: System :: Networking"
     ],
-    keywords="Wrapper for aws services"
+    keywords="Wrapper for yandex cloud services"
 )

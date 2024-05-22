@@ -1,8 +1,10 @@
 yc-aws-wrapper
 =
-#### Example:
-> coming soon
+### About:
+A little sugar for working with Yandex cloud services. May also be compatible with other AWS clones.   
+The wrapper is written for your own needs and primarily for working with Yandex Cloud, ready for criticism and suggestions.
 
+To run tests, in addition to the necessary environment variables, you need S3_BUCKET the location of your test bucket
 
 #### ENV:  
 - **REQUIRED**

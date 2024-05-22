@@ -1,12 +1,14 @@
 import json
 from typing import Optional, Union
 
+from botocore.exceptions import ClientError
+
 from ..base import Service
 
 
 class SQS(Service):
     def get_url(self, queue: str) -> Optional[str]:
-        return self.client.get_queue_url(queue).get("QueueUrl", None)
+        return self.client.get_queue_url(QueueName=queue).get("QueueUrl", None)
 
     def send(self, queue: str, message: Union[dict, str], attributes: dict = None):
         params = {
@@ -42,5 +44,16 @@ class SQS(Service):
         }
         return self.client.receive_message(**params).get("Messages", [])
 
-    def delete_message(self, queue: str, receipt: str):
-        return self.client.delete_message(QueueUrl=self.get_url(queue), ReceiptHandle=receipt)
+    def delete_message(self, queue: str, receipt: str) -> bool:
+        try:
+            self.client.delete_message(QueueUrl=self.get_url(queue), ReceiptHandle=receipt)
+            result = True
+        except ClientError as e:
+            try:
+                if e.response["Error"]["Code"] == "ReceiptHandleIsInvalid":
+                    result = False
+                else:
+                    raise e
+            except Exception:
+                raise e
+        return result

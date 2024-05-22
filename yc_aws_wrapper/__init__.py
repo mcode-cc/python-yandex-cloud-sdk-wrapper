@@ -3,10 +3,10 @@ from functools import lru_cache
 
 from botocore.exceptions import ClientError
 
-from .base import Base
-from .kinesis import Kinesis
-from .s3 import S3
-from .sqs import SQS
+from yc_aws_wrapper.base import Base
+from yc_aws_wrapper.kinesis import Kinesis
+from yc_aws_wrapper.s3 import S3
+from yc_aws_wrapper.sqs import SQS
 
 
 class AWS(Base):
