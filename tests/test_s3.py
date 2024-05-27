@@ -8,14 +8,14 @@ from yc_aws_wrapper.s3 import S3
 
 def order(number):
     def decorator(func):
-        setattr(func, 'order', number)
+        setattr(func, "order", number)
         return func
 
     return decorator
 
 
 class TestS3(unittest.TestCase):
-    bucket = os.getenv("S3_BUCKET")
+    bucket = os.getenv("S3_BUCKET_FOO")
     s3 = S3("s3")
     data = {"Name": "Test", "Service": "S3", "package": "yc-aws-wrapper"}
     file_name = os.path.join("test", "wrapper", "aws", "yc.json")
@@ -36,14 +36,14 @@ class TestS3(unittest.TestCase):
         if self.file is not None:
             hasher = hashlib.md5()
             hasher.update(self.file)
-            response = self.s3.put(key=self.file_name, bucket=self.bucket, body=self.file, acl="private")
+            response = self.s3.foo.put(key=self.file_name, body=self.file, acl="private")
             self.assertEqual(hasher.hexdigest(), str(response.get("ETag", None)).strip("\""))
         else:
             self.assertTrue(False)
 
     @order(3)
     def test_get(self):
-        response = self.s3.get(key=self.file_name, bucket=self.bucket)
+        response = self.s3.foo.get(key=self.file_name)
         if response is not None:
             hasher = hashlib.md5()
             hasher.update(self.file)

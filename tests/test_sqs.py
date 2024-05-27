@@ -18,7 +18,7 @@ class ReceptHandler:
 
 
 class TestSQS(unittest.TestCase):
-    queue = os.getenv("SQS_QUEUE_FOO")
+    queue = os.getenv("SQS_TUBE_FOO")
     sqs = SQS()
     message = "Hellow world"
     receipt = ReceptHandler()

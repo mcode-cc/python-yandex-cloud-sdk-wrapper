@@ -95,11 +95,19 @@ class DynamicService(Service):
         self.__clients = {}
 
     def __update(self, value: str) -> Optional[DynamicClient]:
-        _value = self._env(self.__prefix, value)
-        if _value is not None:
-            self.__clients.update({value: self.__client(client=self.client, path=_value)})
+        _path = self._env(self.__prefix, value)
+        if _path is not None:
+            self.__clients[value] = self.__client(client=self.client, path=_path)
             return self.__clients[value]
         return None
+
+    def load_all_clients(self):
+        _prefix = "{}_{}_".format(self.name, self.__prefix)
+        for k in os.environ.keys():
+            if k.startswith(_prefix):
+                _k = k.replace(_prefix, "")
+                if _k not in self.__clients:
+                    self.__update(_k)
 
     def __getattr__(self, item: str):
         _item = item.upper()
@@ -107,3 +115,15 @@ class DynamicService(Service):
         if attr is not None:
             return attr
         return Stub()
+
+    def __contains__(self, item):
+        return item in self.__clients
+
+    def __getitem__(self, item):
+        if item in self.__clients:
+            return self.__clients[item]
+
+    def __iter__(self):
+        temp = self.__clients
+        for k, v in temp.items():
+            yield k, v

@@ -64,7 +64,7 @@ class SQSClient(DynamicClient):
 
 
 class SQS(DynamicService):
-    def __init__(self, name: str = "sqs", prefix: str = "QUEUE",
+    def __init__(self, name: str = "sqs", prefix: str = "TUBE",
                  client_class=SQSClient, auth: bool = True, config: dict = None):
         super().__init__(name=name, prefix=prefix, client_class=client_class, auth=auth, config=config)
 
