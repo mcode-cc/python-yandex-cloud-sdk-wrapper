@@ -7,6 +7,17 @@ import boto3
 from botocore.config import Config
 
 
+class Stub:
+    def __getattr__(self, item):
+        def stub(*args, **kwargs):
+            return None
+
+        return stub
+
+    def __call__(self, *args, **kwargs):
+        return None
+
+
 class Base:
     def __init__(self, name: str):
         self.name = name
@@ -68,3 +79,31 @@ class Service(Base):
         if self._client is None:
             self._client = boto3.client(**self.params)
         return self._client
+
+
+class DynamicClient:
+    def __init__(self, client: boto3.client, path: str):
+        self.client = client
+        self.path = path
+
+
+class DynamicService(Service):
+    def __init__(self, name: str, prefix: str, client_class, auth: bool = True, config: dict = None):
+        super().__init__(name=name, auth=auth, config=config)
+        self.__client = client_class
+        self.__prefix = prefix
+        self.__clients = {}
+
+    def __update(self, value: str) -> Optional[DynamicClient]:
+        _value = self._env(self.__prefix, value)
+        if _value is not None:
+            self.__clients.update({value: self.__client(client=self.client, path=_value)})
+            return self.__clients[value]
+        return None
+
+    def __getattr__(self, item: str):
+        _item = item.upper()
+        attr = self.__clients[_item] if _item in self.__clients else self.__update(_item)
+        if attr is not None:
+            return attr
+        return Stub()

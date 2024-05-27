@@ -18,7 +18,7 @@ class ReceptHandler:
 
 class TestSQS(unittest.TestCase):
     queue = "test-aws-wrapper"
-    sqs = SQS("sqs")
+    sqs = SQS()
     message = "test world"
     receipt = ReceptHandler()
 
@@ -39,12 +39,12 @@ class TestSQS(unittest.TestCase):
     def test_send(self):
         hasher = hashlib.md5()
         hasher.update(self.message.encode())
-        response = self.sqs.send(queue=self.queue, message="test world")
+        response = self.sqs.test.send(message="test world")
         self.assertEqual(hasher.hexdigest(), response.get("MD5OfMessageBody", None))
 
     @order(3)
     def test_receive(self):
-        messages = self.sqs.receive(queue=self.queue, wait=20)
+        messages = self.sqs.test.receive(wait=20)
         if len(messages) > 0:
             hasher = hashlib.md5()
             hasher.update(self.message.encode())
@@ -56,7 +56,7 @@ class TestSQS(unittest.TestCase):
     @order(4)
     def test_delete_message(self):
         if self.receipt.key is not None:
-            response = self.sqs.delete_message(queue=self.queue, receipt=self.receipt.key)
+            response = self.sqs.test.delete_message(receipt=self.receipt.key)
             self.assertTrue(response)
         else:
             self.assertTrue(False)
