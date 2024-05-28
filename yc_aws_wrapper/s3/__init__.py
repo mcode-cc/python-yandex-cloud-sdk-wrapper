@@ -3,22 +3,18 @@ from datetime import datetime
 from botocore.exceptions import ClientError
 
 from ..base import DynamicService, DynamicClient, Base
+from ..exceptions import boto_exception
 
 
 class S3Client(DynamicClient):
     def get(self, key: str, version: str = None):
         try:
-            result = self.client.get_object(Bucket=self.path, Key=key) if version is None else \
+            return self.client.get_object(Bucket=self.path, Key=key) if version is None else \
                 self.client.get_object(Bucket=self.path, Key=key, VersionId=version)
         except ClientError as e:
-            try:
-                if e.response["Error"]["Code"] == "NoSuchKey":
-                    result = None
-                else:
-                    raise e
-            except Exception:
-                raise e
-        return result
+            if boto_exception(e, "NoSuchKey"):
+                return None
+            raise e
 
     def put(self, key: str, body: bytes, acl: str = None, expires: datetime = None):
         params = {}

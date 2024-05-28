@@ -5,6 +5,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 from ..base import DynamicClient, DynamicService
+from ..exceptions import boto_exception
 
 
 class SQSClient(DynamicClient):
@@ -51,16 +52,11 @@ class SQSClient(DynamicClient):
     def delete_message(self, receipt: str) -> bool:
         try:
             self.client.delete_message(QueueUrl=self.queue, ReceiptHandle=receipt)
-            result = True
+            return True
         except ClientError as e:
-            try:
-                if e.response["Error"]["Code"] == "ReceiptHandleIsInvalid":
-                    result = False
-                else:
-                    raise e
-            except Exception:
-                raise e
-        return result
+            if boto_exception(e, "ReceiptHandleIsInvalid"):
+                return False
+            raise e
 
 
 class SQS(DynamicService):
@@ -69,7 +65,12 @@ class SQS(DynamicService):
         super().__init__(name=name, prefix=prefix, client_class=client_class, auth=auth, config=config)
 
     def get_url(self, queue: str) -> Optional[str]:
-        return self.client.get_queue_url(QueueName=queue).get("QueueUrl", None)
+        try:
+            return self.client.get_queue_url(QueueName=queue).get("QueueUrl", None)
+        except ClientError as e:
+            if boto_exception(e, "QueueDoesNotExist"):
+                return None
+            raise e
 
     def __getattr__(self, item: str) -> SQSClient:
         return super().__getattr__(item)
