@@ -45,6 +45,6 @@ code_2:
 > import from yc_aws_wrapper.s3 import SQS   
 >   
 > sqs = SQS()   
-> sqs.load_all_clients()
+> sqs.load_all_clients()   
 > for el in sqs:   
 >   el.send("Hellow World")
