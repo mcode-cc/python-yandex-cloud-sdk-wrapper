@@ -1,6 +1,7 @@
 import io
 import json
 import os
+import re
 from typing import Optional
 
 import boto3
@@ -102,12 +103,12 @@ class DynamicService(Service):
         return None
 
     def load_all_clients(self):
-        _prefix = "{}_{}_".format(self.name, self.__prefix).upper()
+        pattern = "^{}_{}_([a-zA-Z][a-zA-Z0-9]*)$".format(self.name.upper(), self.__prefix)
         for k in os.environ.keys():
-            if k.startswith(_prefix):
-                _k = k.replace(_prefix, "")
-                if _k not in self.__clients:
-                    self.__update(_k)
+            match = re.findall(pattern, k)
+            if len(match) == 1:
+                if match[0] not in self.__clients:
+                    self.__update(match[0])
 
     def __getattr__(self, item: str):
         _item = item.upper()
