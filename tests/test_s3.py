@@ -57,5 +57,20 @@ class TestS3(unittest.TestCase):
         data = self.s3.deserialize(self.s3.buffer(self.data))
         self.assertTrue(isinstance(data, dict))
 
+    @order(5)
+    def test_load_all_clients(self):
+        os.environ.setdefault("S3_BUCKET_FOO2", os.getenv("S3_BUCKET_FOO"))
+        os.environ.setdefault("S3_BUCKET_FOO3", os.getenv("S3_BUCKET_FOO"))
+        if "foo2" not in self.s3 and "foo3" not in self.s3:
+            self.s3.load_all_clients()
+        else:
+            self.assertTrue(False)
+        self.assertTrue("foo2" in self.s3 and "foo3" in self.s3)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        os.environ.pop("S3_BUCKET_FOO2", "")
+        os.environ.pop("S3_BUCKET_FOO3", "")
+
 
 unittest.TestLoader.sortTestMethodsUsing = TestS3.sortTestMethodsUsing

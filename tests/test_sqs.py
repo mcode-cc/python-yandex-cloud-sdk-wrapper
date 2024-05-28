@@ -62,9 +62,21 @@ class TestSQS(unittest.TestCase):
         else:
             self.assertTrue(False)
 
+    @order(5)
+    def test_load_all_clients(self):
+        os.environ.setdefault("SQS_TUBE_FOO2", os.getenv("SQS_TUBE_FOO"))
+        os.environ.setdefault("SQS_TUBE_FOO3", os.getenv("SQS_TUBE_FOO"))
+        if "foo2" not in self.sqs and "foo3" not in self.sqs:
+            self.sqs.load_all_clients()
+        else:
+            self.assertTrue(False)
+        self.assertTrue("foo2" in self.sqs and "foo3" in self.sqs)
+
     @classmethod
     def tearDownClass(cls):
         cls.sqs.client.delete_queue(QueueUrl=cls.sqs.get_url(queue=cls.queue))
+        os.environ.pop("SQS_TUBE_FOO2")
+        os.environ.pop("SQS_TUBE_FOO3")
 
 
 unittest.TestLoader.sortTestMethodsUsing = TestSQS.sortTestMethodsUsing

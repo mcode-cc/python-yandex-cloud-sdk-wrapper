@@ -102,7 +102,7 @@ class DynamicService(Service):
         return None
 
     def load_all_clients(self):
-        _prefix = "{}_{}_".format(self.name, self.__prefix)
+        _prefix = "{}_{}_".format(self.name, self.__prefix).upper()
         for k in os.environ.keys():
             if k.startswith(_prefix):
                 _k = k.replace(_prefix, "")
@@ -117,13 +117,14 @@ class DynamicService(Service):
         return Stub()
 
     def __contains__(self, item):
-        return item in self.__clients
+        _item = item.upper()
+        return _item in self.__clients
 
     def __getitem__(self, item):
-        if item in self.__clients:
-            return self.__clients[item]
+        _item = item.upper()
+        if _item in self.__clients:
+            return self.__clients[_item]
 
     def __iter__(self):
-        temp = self.__clients
-        for k, v in temp.items():
+        for k, v in self.__clients.items():
             yield k, v
