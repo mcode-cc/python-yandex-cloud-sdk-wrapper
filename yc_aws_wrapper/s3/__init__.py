@@ -2,14 +2,14 @@ from datetime import datetime
 
 from botocore.exceptions import ClientError
 
-from ..base import Service
+from ..base import DynamicService, DynamicClient, Base
 
 
-class S3(Service):
-    def get(self, key: str, bucket: str, version: str = None):
+class S3Client(DynamicClient):
+    def get(self, key: str, version: str = None):
         try:
-            result = self.client.get_object(Bucket=bucket, Key=key) if version is None else \
-                self.client.get_object(Bucket=bucket, Key=key, VersionId=version)
+            result = self.client.get_object(Bucket=self.path, Key=key) if version is None else \
+                self.client.get_object(Bucket=self.path, Key=key, VersionId=version)
         except ClientError as e:
             try:
                 if e.response["Error"]["Code"] == "NoSuchKey":
@@ -20,18 +20,27 @@ class S3(Service):
                 raise e
         return result
 
-    def put(self, key: str, bucket: str, body: bytes, acl: str = None, expires: datetime = None):
+    def put(self, key: str, body: bytes, acl: str = None, expires: datetime = None):
         params = {}
         if acl is not None:
             params["ACL"] = acl
         if isinstance(expires, datetime):
             params["Expires"] = expires
-        return self.client.put_object(Bucket=bucket, Key=key, Body=body, **params)
+        return self.client.put_object(Bucket=self.path, Key=key, Body=body, **params)
 
-    def delete(self, key: str, bucket: str, version: str = None, mfa: str = None):
+    def delete(self, key: str, version: str = None, mfa: str = None):
         params = {}
         if version is not None:
             params["VersionId"] = version
         if mfa is not None:
             params["MFA"] = mfa
-        return self.client.delete_object(Bucket=bucket, Key=key, **params)
+        return self.client.delete_object(Bucket=self.path, Key=key, **params)
+
+
+class S3(DynamicService, Base):
+    def __init__(self, name: str = "sqs", prefix: str = "BUCKET",
+                 client_class=S3Client, auth: bool = True, config: dict = None):
+        super().__init__(name=name, prefix=prefix, client_class=client_class, auth=auth, config=config)
+
+    def __getattr__(self, item: str) -> S3Client:
+        return super().__getattr__(item)
