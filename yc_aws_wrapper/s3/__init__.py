@@ -16,13 +16,8 @@ class S3Client(DynamicClient):
                 return None
             raise e
 
-    def put(self, key: str, body: bytes, acl: str = None, expires: datetime = None):
-        params = {}
-        if acl is not None:
-            params["ACL"] = acl
-        if isinstance(expires, datetime):
-            params["Expires"] = expires
-        return self.client.put_object(Bucket=self.path, Key=key, Body=body, **params)
+    def put(self, key: str, body: bytes, **kwargs):
+        return self.client.put_object(Bucket=self.path, Key=key, Body=body, **kwargs)
 
     def delete(self, key: str, version: str = None, mfa: str = None):
         params = {}
