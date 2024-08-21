@@ -14,6 +14,15 @@ To run tests, in addition to the necessary environment variables, you need S3_BU
 - **SITUATIONAL**:
   > [SERVICE]_ENDPOINT_URL: endpoint for the service, example for yandex sqs: `SQS_ENDPOINT_URL=https://message-queue.api.cloud.yandex.net`    
 - **ADDITIONAL**:
+  - ***SQS***:   
+    >SQS_TUBE_[Method_Name]: Contains the name of the queue to be accessed via a method.  
+      Example: SQS_TUBE_FOO=sqs-aws-wrapper | sqs.foo.send(*args, **kwargs)  
+  - ***S3***:   
+    >S3_BUCKET_[Method_Name]: Contains the name of the bucket to be accessed via a method.  
+      Example: S3_BUCKET_FOO=bucket-aws-wrapper | s3.foo.send(*args, **kwargs) 
+  - ***SESV2***:   
+    >SESV2_MAILBOX_[Method_Name]: Contains the name of the mailbox to be accessed via a method.  
+      Example: SESV2_MAILBOX_FOO=mail@aws-wrapper.net | sesv2.foo.send(*args, **kwargs)   
   - ***Kinesis***:  
     >KINESIS_FOLDER:   
     KINESIS_DATABASE:  
