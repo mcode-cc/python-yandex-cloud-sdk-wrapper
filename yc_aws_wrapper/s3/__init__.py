@@ -29,7 +29,7 @@ class S3Client(DynamicClient):
 
 
 class S3(DynamicService, Base):
-    def __init__(self, name: str = "sqs", prefix: str = "BUCKET",
+    def __init__(self, name: str = "s3", prefix: str = "BUCKET",
                  client_class=S3Client, auth: bool = True, config: dict = None):
         super().__init__(name=name, prefix=prefix, client_class=client_class, auth=auth, config=config)
 
