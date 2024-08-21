@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from botocore.exceptions import ClientError
 
 from ..base import DynamicService, DynamicClient, Base
