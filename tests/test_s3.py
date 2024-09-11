@@ -16,7 +16,7 @@ def order(number):
 
 class TestS3(unittest.TestCase):
     bucket = os.getenv("S3_BUCKET_FOO")
-    s3 = S3("s3")
+    s3 = S3()
     data = {"Name": "Test", "Service": "S3", "package": "yc-aws-wrapper"}
     file_name = os.path.join("test", "wrapper", "aws", "yc.json")
     file = bytes(json.dumps(data, indent=4).encode("utf8"))
