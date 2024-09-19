@@ -11,10 +11,10 @@ class SESV2Client(DynamicClient):
     def __init__(self, client: boto3.client, path: str):
         super().__init__(client, path)
 
-    def send(self, to: Union[str, List[str]], title, message, charset: str = "UTF-8", **kwargs):
-        destination = kwargs["Destination"] if "Destination" in kwargs else {}
+    def send(self, to: Union[str, List[str]], title: str = None, message: str = None, charset: str = "UTF-8", **kwargs):
+        destination = kwargs.pop("Destination", {})
         destination["ToAddresses"] = [to] if isinstance(to, str) else to
-        content = kwargs["Content"] if "Content" in kwargs else {}
+        content = kwargs.pop("Content", {})
         if len(content) < 1:
             content = {
                 "Simple": {
@@ -23,16 +23,16 @@ class SESV2Client(DynamicClient):
                 }
             }
         elif "Simple" in content:
-            content["Simple"]["Subject"] = {"Data": title, "Charset": charset}
-            if "Body" not in content["Simple"]:
-                content["Simple"]["Body"] = {}
-            if "Html" not in content["Simple"]["Body"]:
-                content["Simple"]["Body"]["Text"] = {"Data": message, "Charset": charset}
+            if title is not None:
+                content["Simple"]["Subject"] = {"Data": title, "Charset": charset}
+            if message is not None:
+                content["Simple"]["Body"] = {"Text": {"Data": message, "Charset": charset}}
         try:
             return self.client.send_email(
                 FromEmailAddress=self.path,
                 Destination=destination,
-                Content=content
+                Content=content,
+                **kwargs
             )
         except ClientError as e:
             if boto_exception(e, ""):
