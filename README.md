@@ -17,6 +17,27 @@ A wrapper for convenient work with Yandex Cloud services through AWS-compatible 
 - **SESV2** — Email sending
 - **Kinesis** — Data streams
 
+## Table of Contents
+
+- [Installation](#installation)
+- [Requirements](#requirements)
+- [Environment Variables](#environment-variables)
+  - [Required](#required)
+  - [Optional (per service)](#optional-per-service)
+- [Usage](#usage)
+  - [SQS — Sending and Receiving Messages](#sqs---sending-and-receiving-messages)
+  - [S3 — Working with Objects](#s3---working-with-objects)
+  - [SESV2 — Sending Email](#sesv2---sending-email)
+  - [Kinesis — Data Streams](#kinesis---data-streams)
+  - [AWS — Universal Client](#aws---universal-client)
+- [Examples](#examples)
+- [Testing](#testing)
+- [Error Handling](#error-handling)
+- [License](#license)
+- [Links](#links)
+- [Authors](#authors)
+- [Contributing](#contributing)
+
 ## Installation
 
 ```bash
